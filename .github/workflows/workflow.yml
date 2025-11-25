@@ -17,12 +17,10 @@ jobs:
         with:
           java-version: '25'
           distribution: 'graalvm'
-          components: 'native-image'
 
       - name: Show Java & GraalVM info
         run: |
             java -version
-            gu --version
             native-image --version
 
       - name: Build Quarkus Native Image
