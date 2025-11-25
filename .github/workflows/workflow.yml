@@ -6,7 +6,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:
+      - ubuntu-latest
+      - windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -16,12 +18,21 @@ jobs:
         with:
           java-version: '25'
           distribution: 'graalvm'
+          components: 'native-image'
+
+      - name: Show Java & GraalVM info
+        run: |
+            java -version
+            gu --version
+            native-image --version
 
       - name: Build Quarkus Native Image
-        run: mvn clean install -Pnative -Dquarkus.native.container-build=true
+        run: mvn -B -Pnative -DskipTests package
 
       - name: Upload Native Executable
         uses: actions/upload-artifact@v4
         with:
           name: quarkus-native-executable
-          path: target/*-runner
+          path: |
+            target/*-runner
+            target/*-runner.exe
