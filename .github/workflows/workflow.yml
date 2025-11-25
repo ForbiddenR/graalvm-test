@@ -1,0 +1,27 @@
+name: workflow.yml
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+
+      - name: Build Quarkus Native Image
+        run: mvn clean install -Pnative -Dquarkus.native.container-build=true
+
+      - name: Upload Native Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarkus-native-executable
+          path: target/*-runner
